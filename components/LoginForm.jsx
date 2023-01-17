@@ -1,85 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import React, { useState,  } from "react";
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setconfirmPassword] = useState("");
   const [userName, setUserName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [mobile, setuserMobile] = useState("");
 
-  const [showRegister, setShowRegister] = useState(false);
+  const [showRegister, setShowRegister] = useState(true);
 
-  const router = useRouter();
 
-  // useEffect(() => {
-  //   let loginID = localStorage.getItem("loginID");
-  //   if (!loginID) {
-  //    return;
-  //   }
-  // });
-
-  console.log(email, password, confirmPassword, userName, mobile, "fasdas");
-  function validationCheck(checkfor) {
-    if (checkfor === "register") {
-      if (!(email && password && confirmPassword && userName && mobile)) {
-        console.log('field shouldn"t be empty');
-        return false;
-      }
-      if (password !== confirmPassword) {
-        return false;
-      }
-    }
-
-    if (checkfor === "login") {
-      if (!email && !password) {
-        console.log('field shouldn"t be empty');
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  const formSub = async function (e) {
+  const formSub = function (e) {
     e.preventDefault();
-    let registerApi = "https://api.verifyapi.in/api/register";
-    let LoginApi = "https://api.verifyapi.in/api/login";
-    let validationresponse = validationCheck(
-      (showRegister && "register") || "login"
-    );
-    console.log(validationresponse, "validation response");
-    if (!validationresponse) {
-      return;
-    }
-
-    const headers = { "Content-Type": "application/json" };
-    const res = await fetch((showRegister && registerApi) || LoginApi, {
-      method: "POST",
-      body: JSON.stringify(
-        (showRegister && {
-          name: userName,
-          email: email,
-          mobile: mobile,
-          password: password,
-          password_confirmation: confirmPassword,
-        }) || {
-          email: email,
-          password: password,
-        }
-      ),
-      headers,
-    });
-    setEmail("");
-    setPassword("");
-    const result = await res.json();
-
-    await localStorage.setItem("userData", JSON.stringify(result));
-    router.push("/dashboard")
+    setEmail("")
+    setPassword("")
+    setUserName("")
+    setLastName("")
+    setuserMobile("")
+    alert('Form Submitted Successfully')
   };
 
   return (
     <>
-      <div className="h-fit w-[340px] p-3 px-8 pt-6 shadow-md  shadow-green-500 translate-x-[-60px]">
+      <div className="h-fit w-[440px] p-3 px-8 pt-6 shadow-md  shadow-green-500 ">
         <div>
           <img src="/logo.png" className="w-[180px]" />
         </div>
@@ -93,50 +35,68 @@ export default function LoginForm() {
           </label>
         </div>
         <div className="mt-[10px]">
-          <form>
+          <form onSubmit={formSub}>
             {showRegister && (
               <>
-                <label className="text-[#9f9f9f]">Name</label>
+                <label className="text-[#9f9f9f]">First Name</label>
                 <br />
                 <input
                   placeholder="Enter your name"
                   type="text"
-                  id="password"
                   className="w-[100%] mt-2 p-2 outline:none  rounded-md bg-black text-white password"
                   value={userName}
+                  required={true}
                   onChange={(e) => setUserName(e.target.value)}
+                  pattern="[a-zA-Z]*$"
+                  minlength={4} maxlength={10}
                 />
               </>
             )}
 
-            <label className="text-[#9f9f9f] pt-2 pb-2">Email address</label>
+            <label className="text-[#9f9f9f] pt-2 pb-2">Last Name</label>
             <br />
 
             <input
               className="w-[100%] mt-2 p-2 outline:none rounded-md bg-black text-white "
-              type="email"
-              name="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Enter your Last Name"
+              pattern="[a-zA-Z]*$"
+              required={true}
+              minlength={4}
+              maxLength={16}
             />
             {/* {error &&
              <p className="text-red-500 text-[12px] font-semibold">Please enter a valid email address</p> }
              */}
             <br />
 
+            <label className="text-[#9f9f9f]">Your Email</label>
+                <br />
+                <input
+                  placeholder="Enter your email"
+                  type="email"
+                  className="w-[100%] mt-2 p-2 outline:none  rounded-md bg-black text-white password"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required={true}
+                  pattern="^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$"
+                />
+
             {showRegister && (
               <>
-                <label className="text-[#9f9f9f]">Mobile</label>
+                <label className="text-[#9f9f9f]">Phone No</label>
                 <br />
                 <input
                   placeholder="Enter your mobile"
-                  type="mobile"
-                  id="password"
+                  type="tel"
                   className="w-[100%] mt-2 p-2 outline:none  rounded-md bg-black text-white password"
                   value={mobile}
                   onChange={(e) => setuserMobile(e.target.value)}
+                  required={true}
+                  minLength={10}
+                  maxLength={10}
                 />
               </>
             )}
@@ -150,24 +110,13 @@ export default function LoginForm() {
               name="password"
               className="w-[100%] mt-2 p-2 outline:none  rounded-md bg-black text-white password"
               value={password}
+              required={true}
               onChange={(e) => setPassword(e.target.value)}
+              minLength={8}
+              maxLength={16}
             />
 
-            {showRegister && (
-              <>
-                <label className="text-[#9f9f9f]">Confirm Password</label>
-                <br />
-                <input
-                  placeholder="Enter your password"
-                  type="password"
-                  id="password"
-                  name="password"
-                  className="w-[100%] mt-2 p-2 outline:none  rounded-md bg-black text-white password"
-                  value={confirmPassword}
-                  onChange={(e) => setconfirmPassword(e.target.value)}
-                />
-              </>
-            )}
+            
             {/* {error &&           
             <p className="text-red-500 text-[12px] my-1 font-semibold">Please enter correct password</p>
               } */}
@@ -180,7 +129,6 @@ export default function LoginForm() {
               <button
                 className=" mt-2 bg-[#1de9b6] outline-none cursor-pointer w-[100%] p-2 rounded-md test-center"
                 type="submit"
-                onClick={formSub}
               >
                 {(showRegister && "Register now") || "Sign In"}
               </button>
@@ -190,14 +138,13 @@ export default function LoginForm() {
               {(!showRegister && (
                 <span
                   className="text-[#1de9b6] ml-1 cursor-pointer"
-                  onClick={() => setShowRegister(true)}
                 >
                   Create a Account
                 </span>
               )) || (
                 <span
                   className="text-[#1de9b6] ml-1   cursor-pointer"
-                  onClick={() => setShowRegister(false)}
+
                 >
                   Sign In
                 </span>
